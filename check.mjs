@@ -73,6 +73,10 @@ try {
   await page.waitForLoadState('networkidle');
   assert.match(await page.locator('body').innerText(), /粉红/);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'mobile width');
+  for (const img of await page.locator('.shared-place-photo').all()) {
+    await img.scrollIntoViewIfNeeded(); await img.evaluate(el => el.decode());
+    assert.ok(await img.evaluate(el => el.getBoundingClientRect().right <= innerWidth + 1), 'mobile photo width');
+  }
   await page.screenshot({ path: '/tmp/vietnam-guide-mobile.png', fullPage: true });
   assert.deepEqual(errors, []); assert.deepEqual(badLocal, []); assert.deepEqual(backend, []);
   console.log('PASS: 4 days, 4 bookings, 25 inline photos, restaurant links, airport markers, map tiles/routes, mobile width, no backend requests or browser errors.');
